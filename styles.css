@@ -105,6 +105,21 @@ kbd {
   color: var(--white-60);
 }
 
+.hud-pitch {
+  margin: 10px 0 0;
+  max-width: 46ch;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--white);
+  opacity: 0.86;
+}
+
+.hint a { color: var(--white); text-decoration: none; border-bottom: 1px solid var(--white-35); }
+.hint a:hover { border-color: var(--red); }
+
+.site-note { opacity: 1 !important; border-top: 1px solid var(--white-12); padding-top: 18px; }
+.site-note a { text-decoration: none; border-bottom: 1px solid var(--red); }
+
 .hud-top nav {
   display: flex;
   align-items: center;
@@ -596,7 +611,7 @@ section { padding: 0 var(--gutter); }
 
 .contact-links b {
   font-weight: 800;
-  font-size: clamp(32px, 6vw, 96px);
+  font-size: clamp(28px, 5vw, 80px);
   line-height: 1;
   letter-spacing: -0.04em;
 }
