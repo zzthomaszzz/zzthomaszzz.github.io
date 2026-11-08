@@ -1,48 +1,234 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>My first styled page</title>
-  	<link rel="stylesheet" href="styles/mystyles.css">
-  </head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Thomas Nguyen · Software Developer</title>
+  <meta name="description" content="Thomas Nguyen, software developer and Computer Science graduate (AUT 2026) in Auckland, New Zealand. Drive around the portfolio: full-stack TypeScript, Python multiplayer systems and games.">
+  <meta name="theme-color" content="#0e0e0e">
+  <meta property="og:title" content="Thomas Nguyen · Software Developer">
+  <meta property="og:description" content="Computer Science graduate in Auckland who ships real, working software. Drive the car, knock the letters over, open the projects.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zzthomaszzz.github.io/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e0e0e'/%3E%3Crect x='6' y='6' width='20' height='20' fill='%23cc001e'/%3E%3C/svg%3E">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+        "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/+esm"
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/FontLoader.js" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/geometries/TextGeometry.js" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&display=swap" media="print" onload="this.media='all'">
+</head>
+<body class="is-loading">
+  <canvas id="scene" aria-label="Drivable 3D portfolio. Use the arrow keys or WASD to drive, Enter to open a project."></canvas>
 
-<body>
-<div class = "header">
-<br><br>
-<h1>Class 501 Group 0107</h1>
-<p>Modified by Ngan Nguyen and Thomas Nguyen</p>
-<br>
-</div>
-<!-- Site navigation menu -->
-<ul class="navbar">
-  <li><a href="index.html">Home page</a>
-  <li><a href="misc/topic.html">Technology/Topic</a>
-	<li><a href="misc/opportunities.html">Opportunities</a>
-	<li><a href="misc/risks.html">Risks</a>
-	<li><a href="misc/choices.html">Choices</a>
-	<li><a href="misc/references.html">References</a>
-   <li><a href="misc/process.html">Process Support</a>
-</ul>
+  <div class="hud">
+    <header class="hud-top">
+      <div class="who">
+        <strong>Thomas Nguyen</strong>
+        <span>Software Developer · Computer Science Graduate 2026 · Auckland, NZ</span>
+      </div>
+      <nav aria-label="Sections">
+        <button type="button" data-open="work">Work</button>
+        <button type="button" data-open="skills">Skills</button>
+        <button type="button" data-open="about">About</button>
+        <button type="button" data-open="contact">Contact</button>
+        <a href="./?list" class="list-link">Skip the drive</a>
+      </nav>
+    </header>
 
-<!-- Main content -->
-<h1>Digital Topic: Combating Counterfeit medicines</h1>
-<p>(This website have been modified by Ngan Nguyen, and Thomas Nguyen)</p>
+    <div id="prompt" class="prompt" hidden>
+      <kbd>Enter</kbd>
+      <span></span>
+    </div>
 
+    <div class="hud-bottom">
+      <p class="hint">Arrow keys or WASD to drive · Enter at a sign to open it · R resets the car</p>
+      <div class="touch" aria-label="Touch controls">
+        <div class="pad">
+          <button type="button" data-key="left" aria-label="Steer left">&#9664;</button>
+          <button type="button" data-key="forward" aria-label="Forward">&#9650;</button>
+          <button type="button" data-key="backward" aria-label="Reverse">&#9660;</button>
+          <button type="button" data-key="right" aria-label="Steer right">&#9654;</button>
+        </div>
+        <button type="button" id="open-btn" class="open-btn" hidden>Open</button>
+      </div>
+    </div>
+  </div>
 
-</ul><p>The spread of counterfeit drugs and medicines is a serious threat
-  to public health and safety. These counterfeit products not only fail
-  to provide the intended medical benefits, but they can also cause severe
-  adverse effects and even death. As a result, developing a robust system
-  for detecting and preventing the distribution of counterfeit drugs is
-  critical. Examining the benefits, drawbacks, practical applications,
-  and overall impact of systems used to spot fake drugs and medications
-  is the aim of this portfolio.</p>
+  <div id="loader" class="loader">
+    <div class="loader-mark"></div>
+    <p>Starting the car</p>
+  </div>
 
+  <dialog id="panel" class="panel">
+    <button type="button" class="close" data-close aria-label="Close">Close <kbd>Esc</kbd></button>
+    <div class="panel-body"></div>
+  </dialog>
 
+  <main id="content">
+    <header class="top">
+      <a class="mark" href="./"><span></span>TN</a>
+      <nav aria-label="Sections">
+        <a href="#work">Work</a>
+        <a href="#skills">Skills</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="./" class="drive-link">Drive instead</a>
+      </nav>
+    </header>
 
-<!-- Sign and date the page, it's only polite! -->
-<address>Made 08 June 2023<br>
-  Thomas Nguyen and Ngan Nguyen.</address>
-<br><br><br><br><br><br><br><br><br><br>
+    <section class="hero">
+      <p class="eyebrow">Auckland, New Zealand</p>
+      <h1><span>Thomas</span><span>Nguyen</span></h1>
+      <p class="role">Software Developer · Computer Science Graduate 2026</p>
+      <p class="pitch">I build full-stack TypeScript apps and server-authoritative multiplayer systems, and I test what I ship.</p>
+      <p class="hero-links">
+        <a href="https://github.com/zzthomaszzz" rel="me noopener" target="_blank">github.com/zzthomaszzz</a>
+        <a href="https://thomasng.itch.io" rel="me noopener" target="_blank">thomasng.itch.io</a>
+      </p>
+    </section>
 
+    <section id="work" class="work">
+      <h2 class="section-title">Work</h2>
+      <ol class="projects">
+        <li class="project" id="p-xchess">
+          <span class="num">01</span>
+          <div class="detail">
+            <h3>XChess</h3>
+            <p class="sub">Online chess platform for Chess Power</p>
+            <p class="stack">TypeScript · Next.js · tRPC · Socket.io · MongoDB · C++/WebAssembly</p>
+            <ul class="facts"><li>120+ commits</li><li>Team of four</li><li>C++ engine in WebAssembly</li><li>Playwright end to end</li></ul>
+            <p>Main contributor in a team of four migrating a legacy chess platform into one monorepo, built as a volunteer alongside my coaching role. I built friends and live presence, private chat, invites and challenges, spectating, server-side bot opponents driven by a C++ engine compiled to WebAssembly, and an in-game coin shop. I tracked down race-condition bugs, ran a QA audit, and wrote tests against a real database with Playwright end to end.</p>
+            <p class="status">Ready for private testing</p>
+          </div>
+        </li>
+        <li class="project" id="p-shotcaller">
+          <span class="num">02</span>
+          <div class="detail">
+            <h3>SHOTCALLER</h3>
+            <p class="sub">5v5 auto-battler with layered game AI</p>
+            <p class="stack">Python · pygame · websockets</p>
+            <ul class="facts"><li>Layered utility AI</li><li>Deterministic test harness</li><li>Server-authoritative 2-player</li><li>Desktop and browser builds</li></ul>
+            <p>Draft a team, set the game plan, watch the AI fight it out, and get told why you lost. The AI is layered: strategy profile, team brain, then per-hero utility scoring, with commit windows and retreat locks so units stop dithering. Every AI change is checked by a deterministic fixed-seed headless harness that diffs behaviour across refactors. There is a server-authoritative two-player mode with a room lobby and join codes. Shipped as desktop and browser builds.</p>
+            <a class="go" href="https://thomasng.itch.io/shot-caller" rel="noopener" target="_blank">Play on itch.io</a>
+          </div>
+        </li>
+        <li class="project" id="p-eazee">
+          <span class="num">03</span>
+          <div class="detail">
+            <h3>EAZEE AI outreach tool</h3>
+            <p class="sub">Internal influencer-outreach tool for an Auckland startup</p>
+            <p class="stack">TypeScript · Express · PostgreSQL · React 19 · OpenAI API · Render</p>
+            <ul class="facts"><li>330+ automated tests</li><li>Google OAuth and Gmail API</li><li>Security review and fixes</li><li>In use by the team</li></ul>
+            <p>Built and shipped a tool the team now uses: Google sign-in with an access allow list, an encrypted Gmail connection, safe bulk sending with do-not-contact and unsubscribe handling, AI-assisted drafting, and reply tracking. I wrote over 330 automated tests across the server and the web app, and carried out a security review of the platform and fixed the findings.</p>
+            <p class="status">Internal tool, in use by the team</p>
+          </div>
+        </li>
+        <li class="project" id="p-gloryday">
+          <span class="num">04</span>
+          <div class="detail">
+            <h3>GloryDay</h3>
+            <p class="sub">Real-time multiplayer hero arena</p>
+            <p class="stack">Python · pygame · websockets · GitHub Actions</p>
+            <ul class="facts"><li>30 Hz state snapshots</li><li>Client-side interpolation</li><li>CI builds pushed to itch.io</li></ul>
+            <p>I built the server-authoritative netcode: 30 Hz JSON state snapshots, a lobby phase, client-side interpolation for smooth movement under latency, and version-gated clients. GitHub Actions builds a browser version on every push and pushes Windows builds to itch.io.</p>
+            <a class="go" href="https://github.com/zzthomaszzz/Glory_days_beta" rel="noopener" target="_blank">Source on GitHub</a>
+          </div>
+        </li>
+        <li class="project" id="p-quiz">
+          <span class="num">05</span>
+          <div class="detail">
+            <h3>Weekly Quiz App</h3>
+            <p class="sub">Team project at AUT</p>
+            <p class="stack">React · TypeScript · FastAPI · PostgreSQL</p>
+            <ul class="facts"><li>46 of 86 commits</li><li>CI with coverage gates</li><li>Session auth</li><li>18-defect register</li></ul>
+            <p>I owned the repository in a team of three. I scaffolded the FastAPI and React stack, set up CI with pytest, Vitest, lint and coverage gates, and built session auth, quiz attempts with scoring and attempt limits, and student and lecturer dashboards. We kept a defect register of 18 issues and I fixed the access-control findings.</p>
+            <a class="go" href="https://github.com/zzthomaszzz/WeeklyQuizApp" rel="noopener" target="_blank">Source on GitHub</a>
+          </div>
+        </li>
+        <li class="project" id="p-modifier">
+          <span class="num">06</span>
+          <div class="detail">
+            <h3>Modifier Chess</h3>
+            <p class="sub">Online chess variant</p>
+            <p class="stack">TypeScript · Node.js · Render</p>
+            <ul class="facts"><li>Live now</li><li>Built and deployed solo</li></ul>
+            <p>Live multiplayer web game where two players join through a shared link. Built and deployed solo.</p>
+            <a class="go" href="https://modifier-chess-9a9i.onrender.com" rel="noopener" target="_blank">Play it live</a>
+          </div>
+        </li>
+        <li class="project" id="p-extraction">
+          <span class="num">07</span>
+          <div class="detail">
+            <h3>Extraction</h3>
+            <p class="sub">Real-time multiplayer shooter</p>
+            <p class="stack">Python · TCP</p>
+            <ul class="facts"><li>Custom TCP protocol</li><li>Four classes</li><li>Fog of war</li><li>Capture-point mode</li></ul>
+            <p>A custom client-server TCP architecture syncing positions, projectiles, health and game state. Four classes, fog of war, and a capture-point mode.</p>
+            <a class="go" href="https://github.com/zzthomaszzz/Extraction" rel="noopener" target="_blank">Source on GitHub</a>
+          </div>
+        </li>
+        <li class="project" id="p-wordshurtme">
+          <span class="num">08</span>
+          <div class="detail">
+            <h3>WordsHurtMe</h3>
+            <p class="sub">Commissioned game for a paying client</p>
+            <p class="stack">Freelance contract · 2026</p>
+            <ul class="facts"><li>Paying client</li><li>Full delivery solo</li><li>Shipped on itch.io</li></ul>
+            <p>I gathered the requirements, scoped the work, built to spec, tested, and shipped the finished game on itch.io. I owned the whole delivery solo and kept the client up to date throughout.</p>
+            <p class="status">Published on the client's page</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="skills" class="skills">
+      <h2 class="section-title">Skills</h2>
+      <dl class="skill-groups">
+        <div><dt>Languages</dt><dd>TypeScript, JavaScript, Python, C++, SQL, HTML/CSS</dd></div>
+        <div><dt>Frontend</dt><dd>React, Next.js, React Native, Tailwind, shadcn/ui</dd></div>
+        <div><dt>Backend &amp; Data</dt><dd>Node.js, Express, tRPC, FastAPI, Socket.io, PostgreSQL, MongoDB, REST APIs, Google OAuth and Gmail API</dd></div>
+        <div><dt>Systems &amp; Concepts</dt><dd>Real-time networking (websockets, TCP), server-authoritative multiplayer, WebAssembly, game AI (state machines, utility scoring, pathfinding), data structures and algorithms</dd></div>
+        <div><dt>Engineering Practice</dt><dd>Git and GitHub, test-first development (Vitest, pytest, Playwright), CI quality gates, code review, SOLID and design patterns, Agile/Scrum</dd></div>
+        <div><dt>Build &amp; Deploy</dt><dd>Vercel, Render, Railway, PyInstaller, pygbag/WebAssembly</dd></div>
+      </dl>
+    </section>
+
+    <section id="about" class="about">
+      <h2 class="section-title">About</h2>
+      <div class="about-text">
+        <p class="lead">I'm a Computer Science graduate from AUT who ships real, working software.</p>
+        <p>Over the past year I have built full-stack TypeScript applications for a startup and a chess organisation, delivered a commissioned game end to end for a paying client, and written server-authoritative multiplayer systems in Python. I test what I build, I care about clean architecture and correctness, and I take feedback well.</p>
+        <p>I also coach chess every week for Chess Power and at New Lynn Library, teaching primary-school students and mixed-ability community groups.</p>
+        <p>I'm looking for a junior software developer role where I can own real problems and grow with a team.</p>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <h2 class="section-title">Contact</h2>
+      <div class="contact-links">
+        <a href="https://github.com/zzthomaszzz" rel="me noopener" target="_blank"><span>GitHub</span><b>zzthomaszzz</b></a>
+        <a href="https://thomasng.itch.io" rel="me noopener" target="_blank"><span>itch.io</span><b>thomasng</b></a>
+      </div>
+    </section>
+
+    <footer>
+      <p>Thomas Nguyen · Auckland, New Zealand</p>
+      <p>Built with Three.js and cannon-es. No tracking.</p>
+    </footer>
+  </main>
+
+  <script type="module" src="main.js"></script>
 </body>
 </html>
