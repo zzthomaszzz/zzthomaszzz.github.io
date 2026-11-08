@@ -30,6 +30,9 @@ function build_panel(id) {
   if (source.classList.contains('project')) {
     return source.querySelector('.detail').innerHTML;
   }
+  if (id === 'work') {
+    return source.innerHTML.replace('</h2>', '</h2><p class="open-hint">Click a project to open it</p>');
+  }
   return source.innerHTML;
 }
 
@@ -54,11 +57,21 @@ panel.addEventListener('close', () => {
 panel.querySelector('[data-close]').addEventListener('click', close_panel);
 
 panel.addEventListener('click', (event) => {
-  if (event.target === panel) close_panel();
+  const box = panel.getBoundingClientRect();
+  const is_outside = event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+  if (event.target === panel && is_outside) close_panel();
+});
+
+panel_body.addEventListener('click', (event) => {
+  const row = event.target.closest('.project');
+  if (row && panel_body.querySelector('.projects')) open_panel(row.id);
 });
 
 document.querySelectorAll('[data-open]').forEach((button) => {
-  button.addEventListener('click', () => open_panel(button.dataset.open));
+  button.addEventListener('click', () => {
+    button.blur();
+    open_panel(button.dataset.open);
+  });
 });
 
 function show_prompt(station) {
@@ -106,6 +119,7 @@ function bind_touch_controls() {
 }
 
 async function start_game() {
+  const slow_timer = setTimeout(() => document.body.classList.add('is-slow'), 3000);
   try {
     const module = await import('./game.js');
     game = await module.create_game({
@@ -113,6 +127,7 @@ async function start_game() {
       on_near: show_prompt,
     });
     bind_touch_controls();
+    clearTimeout(slow_timer);
     document.body.classList.remove('is-loading');
   } catch (error) {
     console.error('3D scene failed to start, showing the list instead.', error);

@@ -20,8 +20,8 @@ const max_speed = 17;
 const max_steer = 0.55;
 const brake_force = 18;
 const chassis_mass = 220;
-const near_radius = 11;
-const spawn = new CANNON.Vec3(0, 1.2, 6);
+const near_radius = 16;
+const spawn = new CANNON.Vec3(0, 1.2, 14);
 
 const STATIONS = [
   { id: 'p-xchess', label: 'XChess', sign: 'XCHESS', num: '01', x: -26, z: -38 },
@@ -37,7 +37,7 @@ const STATIONS = [
   { id: 'about', label: 'About', sign: 'ABOUT', num: '', x: 30, z: -6 },
 ];
 
-const TRAIL_ORDER = ['skills', 'about', 'p-xchess', 'p-shotcaller', 'p-gloryday', 'p-eazee', 'p-quiz', 'p-modifier', 'p-wordshurtme', 'p-extraction', 'contact'];
+const TRAIL_ORDER = ['p-xchess', 'p-shotcaller', 'p-eazee', 'p-gloryday', 'p-quiz', 'p-modifier', 'p-extraction', 'p-wordshurtme', 'contact'];
 
 function load_font() {
   return new Promise((resolve, reject) => {
@@ -264,7 +264,7 @@ function create_pillar(scene, world, x, z) {
 function create_trail(scene) {
   const points = [];
   const by_id = Object.fromEntries(STATIONS.map((s) => [s.id, s]));
-  let previous = { x: 0, z: -4 };
+  let previous = { x: 0, z: -26 };
   TRAIL_ORDER.forEach((id) => {
     const next = by_id[id];
     const dx = next.x - previous.x;
@@ -396,7 +396,8 @@ export async function create_game({ canvas, on_near }) {
   function follow_camera(dt) {
     const target = new THREE.Vector3().copy(chassis_body.position).add(camera_offset);
     camera.position.lerp(target, Math.min(1, dt * 4));
-    look_target.lerp(chassis_body.position, Math.min(1, dt * 6));
+    const ahead = new THREE.Vector3(chassis_body.position.x, 0, chassis_body.position.z - 9);
+    look_target.lerp(ahead, Math.min(1, dt * 6));
     camera.lookAt(look_target);
     sun.position.set(chassis_body.position.x + 18, 36, chassis_body.position.z + 14);
     sun.target.position.copy(chassis_body.position);
@@ -446,7 +447,7 @@ export async function create_game({ canvas, on_near }) {
   window.addEventListener('blur', () => Object.keys(keys).forEach((k) => { keys[k] = false; }));
 
   camera.position.copy(chassis_body.position).add(camera_offset);
-  look_target.copy(chassis_body.position);
+  look_target.set(spawn.x, 0, spawn.z - 9);
   frame();
 
   return {
